@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendário de Ofertas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: #f3f4f6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 24px;
+        }
+        
+        h1 {
+            color: #1f2937;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        
+        .btn-adicionar {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        
+        .btn-adicionar:hover {
+            background: #059669;
+        }
+        
+        .lista-ofertas {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .oferta-item {
+            background: #f9fafb;
+            padding: 16px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .oferta-info h3 {
+            color: #1f2937;
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+        
+        .oferta-info p {
+            color: #6b7280;
+            font-size: 13px;
+        }
+        
+        .btn-remover {
+            background: #ef4444;
+            color: white;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+        }
+        
+        .btn-remover:hover {
+            background: #dc2626;
+        }
+        
+        .vazio {
+            text-align: center;
+            color: #9ca3af;
+            padding: 40px 0;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .modal.ativo {
+            display: flex;
+        }
+        
+        .modal-conteudo {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .modal-conteudo h2 {
+            color: #1f2937;
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 16px;
+        }
+        
+        .form-group label {
+            display: block;
+            color: #374151;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #10b981;
+        }
+        
+        .modal-botoes {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        
+        .btn-salvar {
+            flex: 1;
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        .btn-salvar:hover {
+            background: #059669;
+        }
+        
+        .btn-cancelar {
+            flex: 1;
+            background: #e5e7eb;
+            color: #374151;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        .btn-cancelar:hover {
+            background: #d1d5db;
+        }
+        
+        @media (max-width: 640px) {
+            body {
+                padding: 12px;
+            }
+            
+            .container {
+                padding: 16px;
+            }
+            
+            h1 {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📅 Calendário de Ofertas</h1>
+        
+        <button class="btn-adicionar" onclick="abrirModal()">+ Nova Oferta</button>
+        
+        <div id="listaOfertas" class="lista-ofertas">
+            <div class="vazio">
+                Nenhuma oferta cadastrada ainda.<br>
+                Clique em "Nova Oferta" para começar! 🎯
+            </div>
+        </div>
+    </div>
+    
+    <div id="modal" class="modal">
+        <div class="modal-conteudo">
+            <h2>Nova Oferta</h2>
+            
+            <div class="form-group">
+                <label>Nome da Oferta</label>
+                <input type="text" id="nomeOferta" placeholder="Ex: Black Friday">
+            </div>
+            
+            <div class="form-group">
+                <label>Data de Início</label>
+                <input type="date" id="dataInicio">
+            </div>
+            
+            <div class="form-group">
+                <label>Data de Término</label>
+                <input type="date" id="dataFim">
+            </div>
+            
+            <div class="modal-botoes">
+                <button class="btn-salvar" onclick="salvarOferta()">Salvar</button>
+                <button class="btn-cancelar" onclick="fecharModal()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let ofertas = [];
+        
+        // Carregar ofertas do localStorage
+        function carregarOfertas() {
+            const dados = localStorage.getItem('ofertas');
+            if (dados) {
+                ofertas = JSON.parse(dados);
+            }
+            mostrarOfertas();
+        }
+        
+        // Salvar ofertas no localStorage
+        function salvarNoStorage() {
+            localStorage.setItem('ofertas', JSON.stringify(ofertas));
+        }
+        
+        // Mostrar ofertas na tela
+        function mostrarOfertas() {
+            const lista = document.getElementById('listaOfertas');
+            
+            if (ofertas.length === 0) {
+                lista.innerHTML = `
+                    <div class="vazio">
+                        Nenhuma oferta cadastrada ainda.<br>
+                        Clique em "Nova Oferta" para começar! 🎯
+                    </div>
+                `;
+                return;
+            }
+            
+            lista.innerHTML = ofertas.map((oferta, index) => `
+                <div class="oferta-item">
+                    <div class="oferta-info">
+                        <h3>${oferta.nome}</h3>
+                        <p>${formatarData(oferta.inicio)} até ${formatarData(oferta.fim)}</p>
+                    </div>
+                    <button class="btn-remover" onclick="removerOferta(${index})">×</button>
+                </div>
+            `).join('');
+        }
+        
+        // Formatar data para PT-BR
+        function formatarData(dataStr) {
+            const [ano, mes, dia] = dataStr.split('-');
+            return `${dia}/${mes}/${ano}`;
+        }
+        
+        // Abrir modal
+        function abrirModal() {
+            document.getElementById('modal').classList.add('ativo');
+        }
+        
+        // Fechar modal
+        function fecharModal() {
+            document.getElementById('modal').classList.remove('ativo');
+            document.getElementById('nomeOferta').value = '';
+            document.getElementById('dataInicio').value = '';
+            document.getElementById('dataFim').value = '';
+        }
+        
+        // Salvar oferta
+        function salvarOferta() {
+            const nome = document.getElementById('nomeOferta').value.trim();
+            const inicio = document.getElementById('dataInicio').value;
+            const fim = document.getElementById('dataFim').value;
+            
+            if (!nome || !inicio || !fim) {
+                alert('Por favor, preencha todos os campos!');
+                return;
+            }
+            
+            if (inicio > fim) {
+                alert('A data de início não pode ser maior que a data de término!');
+                return;
+            }
+            
+            ofertas.push({ nome, inicio, fim });
+            salvarNoStorage();
+            mostrarOfertas();
+            fecharModal();
+        }
+        
+        // Remover oferta
+        function removerOferta(index) {
+            if (confirm('Deseja realmente remover esta oferta?')) {
+                ofertas.splice(index, 1);
+                salvarNoStorage();
+                mostrarOfertas();
+            }
+        }
+        
+        // Carregar ofertas ao iniciar
+        carregarOfertas();
+    </script>
+</body>
+</html>
