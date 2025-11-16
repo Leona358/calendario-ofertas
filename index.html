@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calendário de Ofertas</title>
+    <title>📅 Calendário de Ofertas</title>
     <style>
         * {
             margin: 0;
@@ -14,64 +14,234 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
             background: #f3f4f6;
-            padding: 20px;
+            padding: 12px;
         }
         
         .container {
-            max-width: 800px;
+            max-width: 100%;
             margin: 0 auto;
             background: white;
             border-radius: 12px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            padding: 24px;
+            padding: 16px;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px;
         }
         
         h1 {
             color: #1f2937;
-            margin-bottom: 20px;
-            font-size: 24px;
+            font-size: 20px;
         }
         
         .btn-adicionar {
             background: #10b981;
             color: white;
             border: none;
-            padding: 12px 24px;
+            padding: 10px 20px;
             border-radius: 8px;
             font-size: 14px;
             font-weight: 600;
             cursor: pointer;
-            margin-bottom: 20px;
         }
         
         .btn-adicionar:hover {
             background: #059669;
         }
         
-        .lista-ofertas {
+        .calendario-wrapper {
+            position: relative;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+        
+        .btn-scroll {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: white;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            cursor: pointer;
+            z-index: 10;
+            font-size: 20px;
+            color: #374151;
+        }
+        
+        .btn-scroll:hover {
+            background: #f3f4f6;
+        }
+        
+        .btn-scroll.esquerda {
+            left: 8px;
+        }
+        
+        .btn-scroll.direita {
+            right: 8px;
+        }
+        
+        .calendario-scroll {
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+        
+        .calendario-scroll::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .meses-row {
             display: flex;
-            flex-direction: column;
-            gap: 12px;
+            border-bottom: 2px solid #d1d5db;
+        }
+        
+        .mes-header {
+            background: #059669;
+            color: white;
+            font-weight: bold;
+            font-size: 10px;
+            padding: 6px 4px;
+            text-align: left;
+            height: 28px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .calendario-grid {
+            display: flex;
+        }
+        
+        .dia-coluna {
+            min-width: 50px;
+            max-width: 50px;
+            border-right: 1px solid #d1d5db;
+        }
+        
+        .dia-numero {
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+            border-bottom: 1px solid #d1d5db;
+            background: #f9fafb;
+            color: #1f2937;
+            cursor: pointer;
+        }
+        
+        .dia-numero.hoje {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .dia-numero:hover {
+            background: #e5e7eb;
+        }
+        
+        .dia-semana {
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 600;
+            border-bottom: 1px solid #d1d5db;
+            background: white;
+            color: #6b7280;
+        }
+        
+        .ofertas-area {
+            position: relative;
+            min-height: 320px;
+            background: #fafafa;
+        }
+        
+        .oferta-barra {
+            position: absolute;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: bold;
+            color: white;
+            border-bottom: 1px solid rgba(0,0,0,0.2);
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            padding: 0 4px;
+        }
+        
+        .cores {
+            display: flex;
+            gap: 8px;
+            margin: 16px 0;
+        }
+        
+        .cor-opcao {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 3px solid transparent;
+        }
+        
+        .cor-opcao.selecionada {
+            border-color: #1f2937;
+        }
+        
+        .lista-ofertas {
+            margin-top: 24px;
+        }
+        
+        .lista-ofertas h2 {
+            color: #1f2937;
+            font-size: 18px;
+            margin-bottom: 12px;
         }
         
         .oferta-item {
             background: #f9fafb;
-            padding: 16px;
+            padding: 12px;
             border-radius: 8px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .oferta-cor {
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+        
+        .oferta-info {
+            flex: 1;
         }
         
         .oferta-info h3 {
             color: #1f2937;
-            font-size: 16px;
+            font-size: 14px;
             margin-bottom: 4px;
         }
         
         .oferta-info p {
             color: #6b7280;
-            font-size: 13px;
+            font-size: 12px;
         }
         
         .btn-remover {
@@ -92,7 +262,8 @@
         .vazio {
             text-align: center;
             color: #9ca3af;
-            padding: 40px 0;
+            padding: 24px 0;
+            font-size: 14px;
         }
         
         .modal {
@@ -106,6 +277,7 @@
             align-items: center;
             justify-content: center;
             padding: 20px;
+            z-index: 1000;
         }
         
         .modal.ativo {
@@ -118,6 +290,8 @@
             padding: 24px;
             width: 100%;
             max-width: 400px;
+            max-height: 90vh;
+            overflow-y: auto;
         }
         
         .modal-conteudo h2 {
@@ -188,32 +362,32 @@
         .btn-cancelar:hover {
             background: #d1d5db;
         }
-        
-        @media (max-width: 640px) {
-            body {
-                padding: 12px;
-            }
-            
-            .container {
-                padding: 16px;
-            }
-            
-            h1 {
-                font-size: 20px;
-            }
-        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>📅 Calendário de Ofertas</h1>
+        <div class="header">
+            <h1>📅 Calendário de Ofertas</h1>
+            <button class="btn-adicionar" onclick="abrirModal()">+ Nova Oferta</button>
+        </div>
         
-        <button class="btn-adicionar" onclick="abrirModal()">+ Nova Oferta</button>
+        <div class="calendario-wrapper">
+            <button class="btn-scroll esquerda" onclick="scrollCalendario(-400)">‹</button>
+            <button class="btn-scroll direita" onclick="scrollCalendario(400)">›</button>
+            
+            <div class="calendario-scroll" id="calendarioScroll">
+                <div class="meses-row" id="mesesRow"></div>
+                <div class="calendario-grid" id="calendarioGrid"></div>
+            </div>
+        </div>
         
-        <div id="listaOfertas" class="lista-ofertas">
-            <div class="vazio">
-                Nenhuma oferta cadastrada ainda.<br>
-                Clique em "Nova Oferta" para começar! 🎯
+        <div class="lista-ofertas">
+            <h2>📋 Ofertas Cadastradas (<span id="totalOfertas">0</span>)</h2>
+            <div id="listaOfertas">
+                <div class="vazio">
+                    Nenhuma oferta cadastrada ainda.<br>
+                    Clique em "Nova Oferta" para começar! 🎯
+                </div>
             </div>
         </div>
     </div>
@@ -225,6 +399,11 @@
             <div class="form-group">
                 <label>Nome da Oferta</label>
                 <input type="text" id="nomeOferta" placeholder="Ex: Black Friday">
+            </div>
+            
+            <div class="form-group">
+                <label>Cor</label>
+                <div class="cores" id="coresOpcoes"></div>
             </div>
             
             <div class="form-group">
@@ -245,25 +424,155 @@
     </div>
     
     <script>
-        let ofertas = [];
+        const CORES = [
+            { nome: 'Vermelho', hex: '#ef4444' },
+            { nome: 'Azul', hex: '#3b82f6' },
+            { nome: 'Verde', hex: '#10b981' },
+            { nome: 'Amarelo', hex: '#fbbf24' },
+            { nome: 'Laranja', hex: '#f97316' },
+            { nome: 'Roxo', hex: '#a855f7' },
+            { nome: 'Rosa', hex: '#ec4899' },
+            { nome: 'Ciano', hex: '#06b6d4' },
+            { nome: 'Índigo', hex: '#6366f1' },
+            { nome: 'Teal', hex: '#14b8a6' }
+        ];
         
-        // Carregar ofertas do localStorage
+        const MESES = ['JANEIRO', 'FEVEREIRO', 'MARÇO', 'ABRIL', 'MAIO', 'JUNHO',
+                       'JULHO', 'AGOSTO', 'SETEMBRO', 'OUTUBRO', 'NOVEMBRO', 'DEZEMBRO'];
+        
+        const DIAS_SEMANA = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+        
+        let ofertas = [];
+        let corSelecionada = CORES[0].hex;
+        
         function carregarOfertas() {
-            const dados = localStorage.getItem('ofertas');
+            const dados = localStorage.getItem('ofertas-calendario');
             if (dados) {
                 ofertas = JSON.parse(dados);
             }
+            renderizarCalendario();
             mostrarOfertas();
         }
         
-        // Salvar ofertas no localStorage
         function salvarNoStorage() {
-            localStorage.setItem('ofertas', JSON.stringify(ofertas));
+            localStorage.setItem('ofertas-calendario', JSON.stringify(ofertas));
         }
         
-        // Mostrar ofertas na tela
+        function gerarDias() {
+            const dias = [];
+            const hoje = new Date();
+            const mesAtual = hoje.getMonth();
+            const anoAtual = hoje.getFullYear();
+            
+            for (let offset = -1; offset <= 2; offset++) {
+                const mes = mesAtual + offset;
+                const ano = anoAtual + Math.floor(mes / 12);
+                const mesAjustado = ((mes % 12) + 12) % 12;
+                const ultimoDia = new Date(ano, mesAjustado + 1, 0).getDate();
+                
+                for (let dia = 1; dia <= ultimoDia; dia++) {
+                    dias.push(new Date(ano, mesAjustado, dia));
+                }
+            }
+            
+            return dias;
+        }
+        
+        function renderizarCalendario() {
+            const dias = gerarDias();
+            const mesesRow = document.getElementById('mesesRow');
+            const calendarioGrid = document.getElementById('calendarioGrid');
+            const hoje = new Date().toDateString();
+            
+            mesesRow.innerHTML = '';
+            calendarioGrid.innerHTML = '';
+            
+            dias.forEach((data, index) => {
+                const primeiroDiaMes = data.getDate() === 1;
+                const ultimoDiaMes = index === dias.length - 1 || 
+                                     dias[index + 1].getMonth() !== data.getMonth();
+                
+                // Cabeçalho do mês
+                const mesDiv = document.createElement('div');
+                mesDiv.style.minWidth = '50px';
+                mesDiv.style.maxWidth = '50px';
+                
+                if (primeiroDiaMes) {
+                    const diasNoMes = new Date(data.getFullYear(), data.getMonth() + 1, 0).getDate();
+                    const mesHeader = document.createElement('div');
+                    mesHeader.className = 'mes-header';
+                    mesHeader.textContent = MESES[data.getMonth()];
+                    mesHeader.style.width = ultimoDiaMes ? '50px' : `${diasNoMes * 50}px`;
+                    mesDiv.appendChild(mesHeader);
+                }
+                
+                mesesRow.appendChild(mesDiv);
+                
+                // Coluna do dia
+                const diaCol = document.createElement('div');
+                diaCol.className = 'dia-coluna';
+                
+                const diaNumero = document.createElement('div');
+                diaNumero.className = 'dia-numero';
+                if (data.toDateString() === hoje) {
+                    diaNumero.classList.add('hoje');
+                }
+                diaNumero.textContent = data.getDate();
+                
+                const diaSemana = document.createElement('div');
+                diaSemana.className = 'dia-semana';
+                diaSemana.textContent = DIAS_SEMANA[data.getDay()];
+                
+                const ofertasArea = document.createElement('div');
+                ofertasArea.className = 'ofertas-area';
+                
+                // Renderizar ofertas
+                ofertas.forEach((oferta, ofertaIndex) => {
+                    const dataAtual = new Date(data.getFullYear(), data.getMonth(), data.getDate()).getTime();
+                    const inicioOferta = new Date(oferta.inicio).getTime();
+                    const fimOferta = new Date(oferta.fim).getTime();
+                    
+                    if (dataAtual >= inicioOferta && dataAtual <= fimOferta) {
+                        if (dataAtual === inicioOferta) {
+                            const diasDuracao = Math.ceil((fimOferta - inicioOferta) / (1000 * 60 * 60 * 24)) + 1;
+                            
+                            const barra = document.createElement('div');
+                            barra.className = 'oferta-barra';
+                            barra.style.background = oferta.cor;
+                            barra.style.width = `${diasDuracao * 50}px`;
+                            barra.style.top = `${ofertaIndex * 32}px`;
+                            barra.style.left = '0';
+                            barra.textContent = oferta.nome;
+                            
+                            ofertasArea.appendChild(barra);
+                        }
+                    }
+                });
+                
+                diaCol.appendChild(diaNumero);
+                diaCol.appendChild(diaSemana);
+                diaCol.appendChild(ofertasArea);
+                
+                calendarioGrid.appendChild(diaCol);
+            });
+            
+            // Scroll para hoje
+            setTimeout(() => {
+                const hoje = document.querySelector('.dia-numero.hoje');
+                if (hoje) {
+                    const container = document.getElementById('calendarioScroll');
+                    const elementoLeft = hoje.parentElement.offsetLeft;
+                    const containerWidth = container.offsetWidth;
+                    container.scrollLeft = elementoLeft - (containerWidth / 2) + 25;
+                }
+            }, 100);
+        }
+        
         function mostrarOfertas() {
             const lista = document.getElementById('listaOfertas');
+            const total = document.getElementById('totalOfertas');
+            
+            total.textContent = ofertas.length;
             
             if (ofertas.length === 0) {
                 lista.innerHTML = `
@@ -277,35 +586,55 @@
             
             lista.innerHTML = ofertas.map((oferta, index) => `
                 <div class="oferta-item">
-                    <div class="oferta-info">
-                        <h3>${oferta.nome}</h3>
-                        <p>${formatarData(oferta.inicio)} até ${formatarData(oferta.fim)}</p>
+                    <div style="display: flex; align-items: center; flex: 1;">
+                        <div class="oferta-cor" style="background: ${oferta.cor}"></div>
+                        <div class="oferta-info">
+                            <h3>${oferta.nome}</h3>
+                            <p>${formatarData(oferta.inicio)} até ${formatarData(oferta.fim)}</p>
+                        </div>
                     </div>
                     <button class="btn-remover" onclick="removerOferta(${index})">×</button>
                 </div>
             `).join('');
         }
         
-        // Formatar data para PT-BR
         function formatarData(dataStr) {
-            const [ano, mes, dia] = dataStr.split('-');
+            const data = new Date(dataStr);
+            const dia = String(data.getDate()).padStart(2, '0');
+            const mes = String(data.getMonth() + 1).padStart(2, '0');
+            const ano = data.getFullYear();
             return `${dia}/${mes}/${ano}`;
         }
         
-        // Abrir modal
         function abrirModal() {
+            // Renderizar cores
+            const coresDiv = document.getElementById('coresOpcoes');
+            coresDiv.innerHTML = CORES.map(cor => `
+                <div class="cor-opcao ${cor.hex === corSelecionada ? 'selecionada' : ''}" 
+                     style="background: ${cor.hex}" 
+                     onclick="selecionarCor('${cor.hex}')"
+                     title="${cor.nome}"></div>
+            `).join('');
+            
             document.getElementById('modal').classList.add('ativo');
         }
         
-        // Fechar modal
         function fecharModal() {
             document.getElementById('modal').classList.remove('ativo');
             document.getElementById('nomeOferta').value = '';
             document.getElementById('dataInicio').value = '';
             document.getElementById('dataFim').value = '';
+            corSelecionada = CORES[0].hex;
         }
         
-        // Salvar oferta
+        function selecionarCor(cor) {
+            corSelecionada = cor;
+            document.querySelectorAll('.cor-opcao').forEach(el => {
+                el.classList.remove('selecionada');
+            });
+            event.target.classList.add('selecionada');
+        }
+        
         function salvarOferta() {
             const nome = document.getElementById('nomeOferta').value.trim();
             const inicio = document.getElementById('dataInicio').value;
@@ -321,22 +650,27 @@
                 return;
             }
             
-            ofertas.push({ nome, inicio, fim });
+            ofertas.push({ nome, inicio, fim, cor: corSelecionada });
             salvarNoStorage();
+            renderizarCalendario();
             mostrarOfertas();
             fecharModal();
         }
         
-        // Remover oferta
         function removerOferta(index) {
             if (confirm('Deseja realmente remover esta oferta?')) {
                 ofertas.splice(index, 1);
                 salvarNoStorage();
+                renderizarCalendario();
                 mostrarOfertas();
             }
         }
         
-        // Carregar ofertas ao iniciar
+        function scrollCalendario(valor) {
+            const container = document.getElementById('calendarioScroll');
+            container.scrollBy({ left: valor, behavior: 'smooth' });
+        }
+        
         carregarOfertas();
     </script>
 </body>
