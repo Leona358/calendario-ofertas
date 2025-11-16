@@ -526,15 +526,21 @@
                 const ofertasArea = document.createElement('div');
                 ofertasArea.className = 'ofertas-area';
                 
-                // Renderizar ofertas
+                // Renderizar ofertas para este dia
+                const dataStr = `${data.getFullYear()}-${String(data.getMonth() + 1).padStart(2, '0')}-${String(data.getDate()).padStart(2, '0')}`;
+                
                 ofertas.forEach((oferta, ofertaIndex) => {
-                    const dataAtual = new Date(data.getFullYear(), data.getMonth(), data.getDate()).getTime();
-                    const inicioOferta = new Date(oferta.inicio).getTime();
-                    const fimOferta = new Date(oferta.fim).getTime();
+                    const inicioStr = oferta.inicio;
+                    const fimStr = oferta.fim;
                     
-                    if (dataAtual >= inicioOferta && dataAtual <= fimOferta) {
-                        if (dataAtual === inicioOferta) {
-                            const diasDuracao = Math.ceil((fimOferta - inicioOferta) / (1000 * 60 * 60 * 24)) + 1;
+                    // Verificar se a oferta está ativa neste dia
+                    if (dataStr >= inicioStr && dataStr <= fimStr) {
+                        // Só desenhar a barra no primeiro dia da oferta
+                        if (dataStr === inicioStr) {
+                            // Calcular quantos dias a oferta dura
+                            const inicio = new Date(inicioStr + 'T00:00:00');
+                            const fim = new Date(fimStr + 'T00:00:00');
+                            const diasDuracao = Math.floor((fim - inicio) / (1000 * 60 * 60 * 24)) + 1;
                             
                             const barra = document.createElement('div');
                             barra.className = 'oferta-barra';
